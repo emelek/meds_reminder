@@ -16,4 +16,4 @@ class Med:
             INSERT INTO med (name, value_in_full) 
             VALUES ('%s', '%s');
             """ % (self.name, self.value_in_full)
-            db.executor(create_new_med_sql)
+            return db.executor(create_new_med_sql)

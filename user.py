@@ -18,4 +18,5 @@ class User:
             VALUES ('%s', '%s', '%s');
             """ % (self.tg_code, self.name, self.register_at)
 
-            db.executor(create_new_user_sql)
+            return db.executor(create_new_user_sql)[1]
+

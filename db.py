@@ -25,39 +25,39 @@ def migration():
     );""",
         'create_med_table': """
         CREATE TABLE IF NOT EXISTS med (
-            id integer PRIMARY KEY,
-            name text NOT NULL,
-            value_in_full FLOAT NOT NULL,
-            valid_before date
-        );""",
+        id integer PRIMARY KEY,
+        name text NOT NULL,
+        value_in_full FLOAT NOT NULL,
+        valid_before date
+    );""",
         'create_aid_kit_table': """
             CREATE TABLE IF NOT EXISTS aid_kit (
-                id integer PRIMARY KEY,
-                med_id REFERENCES med(id),
-                user_id REFERENCES user(id),
-                value_now FLOAT NOT NULL
-            );""",
+            id integer PRIMARY KEY,
+            med_id REFERENCES med(id),
+            user_id REFERENCES user(id),
+            value_now FLOAT NOT NULL
+        );""",
         'create_duration_table': """
             CREATE TABLE IF NOT EXISTS duration (
-                id integer PRIMARY KEY,
-                start_date date NOT NULL,
-                end_date date NOT NULL
-            );""",
+            id integer PRIMARY KEY,
+            start_date date NOT NULL,
+            end_date date NOT NULL
+        );""",
         'create_period_table': """
             CREATE TABLE IF NOT EXISTS period (
-                id integer PRIMARY KEY,
-                name text NOT NULL,
-                per text NOT NULL
-            );""",
+            id integer PRIMARY KEY,
+            name text NOT NULL,
+            per text NOT NULL
+        );""",
         'create_med_in_use_table': """
             CREATE TABLE IF NOT EXISTS med_in_use (
-                id integer PRIMARY KEY,
-                aid_kit_id REFERENCES aid_kit(id),
-                duration_id REFERENCES duration(id),
-                period_id REFERENCES period(id),                
-                period_val integer NOT NULL,
-                med_per_use FLOAT NOT NULL
-            );""",
+            id integer PRIMARY KEY,
+            aid_kit_id REFERENCES aid_kit(id),
+            duration_id REFERENCES duration(id),
+            period_id REFERENCES period(id),                
+            period_val integer NOT NULL,
+            med_per_use FLOAT NOT NULL
+        );""",
     }
     try:
         connect = create_connection(config.db)
@@ -67,6 +67,7 @@ def migration():
     except Error as e:
         print(e)
 
+#TODO вынести в классы
 
 def existor(table, statement, value):
     sql = """
@@ -76,7 +77,7 @@ def existor(table, statement, value):
     print(sql)
     count = []
     try:
-        result = executor(sql)
+        result = executor(sql)[0]
         if result is not None:
             for row in result:
                 count += row
@@ -95,9 +96,10 @@ def executor(code):
     connection = create_connection(config.db)
     cursor = connection.cursor()
     cursor.execute(code)
+    last_id = cursor.lastrowid
     rows = cursor.fetchall()
     connection.commit()
-    return rows
+    return [rows, last_id]
 
 
 if __name__ == '__main__':
